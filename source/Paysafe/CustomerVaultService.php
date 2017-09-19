@@ -369,7 +369,29 @@ class CustomerVaultService
 
         return new CustomerVault\Card($response);
     }
+    /**
+     * Create card.
+     *
+     * @param \Paysafe\CustomerVault\Card $card
+     * @return \Paysafe\CustomerVault\Card
+     * @throws PaysafeException
+     */
+    public function createCardUsingSingleUseToken( CustomerVault\Card $card )
+    {
+        $card->setRequiredFields(array('profileID'));
+        $card->checkRequiredFields();
+        $card->setRequiredFields(array('singleUseToken'));
+       
+        $request = new Request(array(
+            'method' => Request::POST,
+            'uri' => $this->prepareURI("/profiles/" . $card->profileID . "/cards"),
+            'body' => $card
+        ));
+        $response = $this->client->processRequest($request);
+        $response['profileID'] = $card->profileID;
 
+        return new CustomerVault\Card($response);
+    }
     /**
      * Update card.
      *
